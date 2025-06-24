@@ -24,4 +24,18 @@ router.post(
   register
 );
 
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Invalid email address"),
+    body("password")
+      .trim()
+      .notEmpty()
+      .withMessage("Password is required")
+      .isLength({ min: 4 })
+      .withMessage("Password must be at least 4 characters long"),
+  ],
+  login
+);
+
 module.exports = router;

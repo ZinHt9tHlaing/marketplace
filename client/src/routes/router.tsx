@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
-import RegisterForm from "../pages/RegisterForm";
-import LoginForm from "../pages/LoginForm";
+import RegisterForm from "../pages/Auth/RegisterForm";
+import LoginForm from "../pages/Auth/LoginForm";
 
 export const router = createBrowserRouter([
   {
