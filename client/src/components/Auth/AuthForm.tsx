@@ -24,6 +24,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         if (response?.isSuccess) {
           message.success(response.message);
           localStorage.setItem("token", response.token);
+          navigate("/");
         } else {
           throw new Error(response.message);
         }
