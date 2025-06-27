@@ -2,6 +2,8 @@ import { Form, Input, message } from "antd";
 import { loginUser, registerUser } from "../../api/auth/authAxios";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { setUserId } from "../../store/slice/userSlice";
 
 type FormInputProps = {
   username: string;
@@ -17,6 +19,8 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
+  const dispatch = useDispatch();
+
   const handleOnFinish = async (values: FormInputProps) => {
     if (isLoginPage) {
       try {
@@ -24,6 +28,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         if (response?.isSuccess) {
           message.success(response.message);
           localStorage.setItem("token", response.token);
+          dispatch(setUserId(response.token));
           navigate("/");
         } else {
           throw new Error(response.message);

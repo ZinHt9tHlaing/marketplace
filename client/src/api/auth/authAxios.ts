@@ -40,3 +40,19 @@ export const loginUser = async (payload: LoginPayload) => {
     }
   }
 };
+
+// check current user
+export const checkCurrentUser = async () => {
+  try {
+    const response = await axiosInstance.get("/auth/get-current-user", {
+      validateStatus: () => true,
+    });
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    } else {
+      return error;
+    }
+  }
+};

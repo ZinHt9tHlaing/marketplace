@@ -1,6 +1,11 @@
 const express = require("express");
 const { body } = require("express-validator");
-const { register, login } = require("../controllers/authController");
+const {
+  register,
+  login,
+  checkCurrentUser,
+} = require("../controllers/authController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -37,5 +42,8 @@ router.post(
   ],
   login
 );
+
+// check user login or not
+router.get("/get-current-user", authMiddleware, checkCurrentUser);
 
 module.exports = router;

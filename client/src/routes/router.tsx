@@ -4,6 +4,7 @@ import LoginForm from "../pages/Auth/LoginForm";
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/Home/HomePage";
 import ProfileIndex from "../pages/Profile/ProfileIndex";
+import AuthProvider from "../providers/AuthProvider";
 
 export const router = createBrowserRouter([
   {
@@ -24,7 +25,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <ProfileIndex />,
+        element: (
+          <AuthProvider>
+            <ProfileIndex />
+          </AuthProvider>
+        ),
       },
     ],
   },
