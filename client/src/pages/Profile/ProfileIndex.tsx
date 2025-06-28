@@ -1,12 +1,12 @@
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Products from "./Products";
-import AddProduct from "./AddProduct";
+import General from "./General";
+import SellProduct from "./SellProduct";
+import { useState } from "react";
 
 const ProfileIndex: React.FC = () => {
-  const onChange = (key: string) => {
-    console.log(key);
-  };
+  const [activeTabKey, setActiveTabKey] = useState<string>("1");
 
   const items: TabsProps["items"] = [
     {
@@ -16,8 +16,8 @@ const ProfileIndex: React.FC = () => {
     },
     {
       key: "2",
-      label: "Add Product",
-      children: <AddProduct  />,
+      label: "Sell Product",
+      children: <SellProduct setActiveTabKey={setActiveTabKey} />,
     },
     {
       key: "3",
@@ -26,12 +26,22 @@ const ProfileIndex: React.FC = () => {
     },
     {
       key: "4",
-      label: "Profile",
-      children: "Content of Tab Pane 3",
+      label: "General ",
+      children: <General />,
     },
   ];
 
-  return <Tabs defaultActiveKey="1" items={items} onChange={onChange} tabPosition="left" />;
+  return (
+    <section>
+      <Tabs
+        activeKey={activeTabKey}
+        onChange={(key) => setActiveTabKey(key)}
+        items={items}
+        tabPosition="left"
+        size="large"
+      />
+    </section>
+  );
 };
 
 export default ProfileIndex;

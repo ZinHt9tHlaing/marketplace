@@ -3,7 +3,7 @@ import { loginUser, registerUser } from "../../api/auth/authAxios";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { setUserId } from "../../store/slice/userSlice";
+import { setUser } from "../../store/slice/userSlice";
 
 type FormInputProps = {
   username: string;
@@ -28,7 +28,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         if (response?.isSuccess) {
           message.success(response.message);
           localStorage.setItem("token", response.token);
-          dispatch(setUserId(response.token));
+          dispatch(setUser(response.token));
           navigate("/");
         } else {
           throw new Error(response.message);

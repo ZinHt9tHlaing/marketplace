@@ -109,7 +109,9 @@ exports.checkCurrentUser = async (req, res) => {
       throw new Error("Unauthorized User");
     }
 
-    res.status(200).json({ isSuccess: true, message: "User is authorized", userDoc });
+    res
+      .status(200)
+      .json({ isSuccess: true, message: "User is authorized", userDoc });
   } catch (error) {
     console.log("error", error);
     res.status(401).json({ isSuccess: false, message: error.message });

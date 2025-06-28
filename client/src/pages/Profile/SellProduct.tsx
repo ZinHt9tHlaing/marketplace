@@ -4,13 +4,26 @@ import {
   Col,
   Form,
   Input,
+  message,
   Row,
   Select,
   type CheckboxOptionType,
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import { createProduct } from "../../api/products/productAxios";
 
-const AddProduct = () => {
+type ProductType = {
+  product_name: string;
+  product_description: string;
+  product_price: number;
+  product_category: string;
+  product_used_for: string;
+  product_details: string[];
+};
+
+const SellProduct = ({ setActiveTabKey }: string | any) => {
+  const [form] = Form.useForm();
+
   const selectOptions = [
     {
       value: "clothing_and_fashion",
@@ -100,10 +113,31 @@ const AddProduct = () => {
     { label: "Voucher", value: "Voucher" },
   ];
 
+  const onFinishHandler = async (values: ProductType) => {
+    try {
+      const response = await createProduct(values);
+      if (response?.isSuccess) {
+        form.resetFields();
+        message.success(response.message);
+        setActiveTabKey("1");
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
+
   return (
     <section>
-      <h1 className="text-2xl font-bold my-2">What do you want to sell?</h1>
-      <Form layout="vertical">
+      <h1 className="text-2xl md:text-3xl font-bold my-2">
+        What do you want to sell?
+      </h1>
+      <Form layout="vertical" onFinish={onFinishHandler} form={form}>
         {/* name */}
         <Form.Item
           name={"product_name"}
@@ -170,11 +204,11 @@ const AddProduct = () => {
           type="submit"
           className="font-medium text-lg bg-indigo-600 text-white w-full cursor-pointer rounded-md px-2 py-1 flex items-center justify-center gap-1 active:scale-95 duration-200"
         >
-          <SquaresPlusIcon width={30} /> Sell
+          <SquaresPlusIcon width={25} /> Sell
         </button>
       </Form>
     </section>
   );
 };
 
-export default AddProduct;
+export default SellProduct;

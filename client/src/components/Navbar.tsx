@@ -4,14 +4,14 @@ import type { RootState } from "../store/store";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const userId = useSelector((state: RootState) => state.reducer.user.userId);
+  const { user } = useSelector((state: RootState) => state.reducer.user);
 
   return (
     <nav className="flex justify-between items-center p-4 bg-indigo-600 text-white">
       <Link to={"/"}>
         <h1 className="text-3xl font-bold">MARKET.IO</h1>
       </Link>
-      {userId ? (
+      {user ? (
         <Link
           to={"/profile"}
           className=" fill-black rounded-md px-2 py-1 flex items-center gap-1 active:scale-90 duration-200"
