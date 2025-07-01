@@ -22,6 +22,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
   const dispatch = useDispatch();
 
   const handleOnFinish = async (values: FormInputProps) => {
+    setIsSubmitting(true);
     if (isLoginPage) {
       try {
         const response = await loginUser(values);
@@ -49,6 +50,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         message.error(error.message);
       }
     }
+    setIsSubmitting(true);
   };
 
   return (
@@ -106,10 +108,10 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full outline-none bg-indigo-600 cursor-pointer text-white py-2 rounded-md disabled:cursor-not-allowed disabled:bg-indigo-400 active:scale-95 duration-200"
+              className="flex justify-center items-center gap-2 w-full outline-none bg-indigo-600 cursor-pointer text-white py-2 rounded-md disabled:cursor-not-allowed disabled:bg-indigo-400 active:scale-95 duration-200"
             >
               {isSubmitting && (
-                <div className="w-6 h-6 border-4 border-white border-t-transparent rounded-full animate-spin" />
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
               )}
               {isLoginPage ? "Login" : "Register"}
             </button>

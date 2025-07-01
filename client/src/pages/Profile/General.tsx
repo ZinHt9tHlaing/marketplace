@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
-import type { UserType } from "../../types/user";
+import type { UserType } from "../../types/auth/userTypes";
 import { clearUser } from "../../store/slice/userSlice";
 import { useNavigate } from "react-router-dom";
 
