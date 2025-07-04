@@ -150,3 +150,16 @@ exports.deleteProduct = async (req, res) => {
     res.status(400).json({ isSuccess: false, message: error.message });
   }
 };
+
+// upload product image
+exports.uploadProductImage = async (req, res) => {
+  try {
+    const files = req.files;
+    console.log("files", files);
+
+    res.status(200).json({ isSuccess: true, message: "Image uploaded", files });
+  } catch (error) {
+    console.log("Product deletion error", error);
+    res.status(400).json({ isSuccess: false, message: error.message });
+  }
+};

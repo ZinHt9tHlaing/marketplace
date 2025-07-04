@@ -25,6 +25,9 @@ const ProductSchema = new mongoose.Schema(
     details: {
       type: Array,
     },
+    images: {
+      type: [String],
+    },
     status: {
       type: String,
       default: "pending",

@@ -1,10 +1,15 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const multer = require("multer");
 const cors = require("cors");
 const { connectDB } = require("./config/db");
 const dotenv = require("dotenv").config();
 const authRoutes = require("./routes/authRoutes");
 const productRoutes = require("./routes/productRoutes");
+const {
+  storageConfig,
+  fileFilterConfig,
+} = require("./middlewares/multer-storage");
 
 const app = express();
 
@@ -17,7 +22,13 @@ app.use(
     credentials: true,
   })
 );
+app.use(
+  multer({ storage: storageConfig, fileFilter: fileFilterConfig }).array(
+    "product_images"
+  )
+);
 
+// routes
 app.use("/auth", authRoutes);
 app.use(productRoutes);
 

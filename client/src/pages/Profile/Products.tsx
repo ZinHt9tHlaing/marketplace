@@ -94,14 +94,21 @@ const Products = ({
                       <button
                         type="button"
                         onClick={() => editHandler(product._id)}
-                        className="font-medium cursor-pointer text-blue-600 dark:text-blue-500 hover:underline active:scale-90 duration-200"
+                        className="font-medium cursor-pointer text-yellow-500 hover:underline active:scale-90 duration-200"
+                      >
+                        Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => editHandler(product._id)}
+                        className="font-medium cursor-pointer text-emerald-600 hover:underline active:scale-90 duration-200"
                       >
                         Edit
                       </button>
                       <button
                         type="button"
                         onClick={() => deleteHandler(product._id)}
-                        className="font-medium cursor-pointer text-red-600 dark:text-red-500 hover:underline active:scale-90 duration-200"
+                        className="font-medium cursor-pointer text-red-500 hover:underline active:scale-90 duration-200"
                       >
                         Delete
                       </button>

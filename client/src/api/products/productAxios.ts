@@ -86,3 +86,23 @@ export const deleteProduct = async (id: string) => {
     }
   }
 };
+
+// upload product image
+export const uploadProductImage = async (payload) => {
+  try {
+    const response = await axiosInstance.post(
+      "/upload-product-image",
+      payload,
+      {
+        validateStatus: () => true,
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    } else {
+      return error;
+    }
+  }
+};
