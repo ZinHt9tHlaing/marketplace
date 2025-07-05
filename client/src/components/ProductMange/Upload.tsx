@@ -3,7 +3,12 @@ import { useState } from "react";
 import { uploadProductImage } from "../../api/products/productAxios";
 import { message } from "antd";
 
-const Upload = () => {
+type UploadProps = {
+  editProductId: string | null;
+  setActiveTabKey: (key: string) => void;
+};
+
+const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
 
@@ -22,8 +27,17 @@ const Upload = () => {
   };
 
   const deletePreviewImageHandler = (img: string) => {
-    setPreviewImages((prev) => prev.filter((item) => item !== img));
-    URL.revokeObjectURL(img);
+    const indexToDelete = previewImages.findIndex((imgUrl) => imgUrl === img);
+
+    if (indexToDelete !== -1) {
+      const updatedPreviewImages = [...images];
+      updatedPreviewImages.splice(indexToDelete, 1);
+
+      setImages(updatedPreviewImages);
+      setPreviewImages((prevImg) => prevImg.filter((imgUrl) => imgUrl !== img));
+
+      URL.revokeObjectURL(img);
+    }
   };
 
   const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -34,14 +48,13 @@ const Upload = () => {
       formData.append(`product_images`, images[i]);
     }
 
-    // images.forEach((img, index) => {
-    //   formData.append(`product_images`, img);
-    // });
+    formData.append("product_id", editProductId!);
 
     try {
       const response = await uploadProductImage(formData);
       if (response.isSuccess) {
         message.success(response.message);
+        setActiveTabKey("1");
       } else {
         throw new Error(response.message);
       }
