@@ -94,7 +94,7 @@ router.get(
   getProductSavedImages
 );
 
-// delete product  images
+// delete product images
 router.delete(
   "/delete-product-images/:productId/:imgToDelete",
   authMiddleware,

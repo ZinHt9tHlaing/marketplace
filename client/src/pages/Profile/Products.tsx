@@ -9,19 +9,28 @@ const Products = ({
   setEditMode,
   setEditProductId,
   getAllProduct,
+  setManageTabKey,
 }: ProductsPropType) => {
   const [form] = Form.useForm();
 
-  const editHandler = (id: string) => {
+  const editHandler = (product_id: string) => {
     setEditMode(true);
     setActiveTabKey("2");
-    setEditProductId(id);
+    setEditProductId(product_id);
     form.resetFields();
+    setManageTabKey("1");
   };
 
-  const deleteHandler = async (id: string) => {
+  const uploadHandler = async (product_id: string) => {
+    setEditMode(true);
+    setActiveTabKey("2");
+    setEditProductId(product_id);
+    setManageTabKey("2");
+  };
+
+  const deleteHandler = async (product_id: string) => {
     try {
-      const response = await deleteProduct(id);
+      const response = await deleteProduct(product_id);
       if (response?.isSuccess) {
         message.success(response.message);
         getAllProduct();
@@ -93,7 +102,7 @@ const Products = ({
                     <td className="px-6 py-4 space-x-3">
                       <button
                         type="button"
-                        onClick={() => editHandler(product._id)}
+                        onClick={() => uploadHandler(product._id)}
                         className="font-medium cursor-pointer text-yellow-500 hover:underline active:scale-90 duration-200"
                       >
                         Upload

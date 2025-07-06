@@ -9,6 +9,7 @@ const ManageProduct = ({
   getAllProduct,
   editMode,
   editProductId,
+  manageTabKey,
 }: ManageProductProps) => {
   const [productActiveTabKey, setProductActiveTabKey] = useState<string>("1");
 
@@ -41,15 +42,16 @@ const ManageProduct = ({
       : []),
   ];
 
-  const onChangeHandler = (key: string) => {
-    setProductActiveTabKey(key);
-  };
+  // const onChangeHandler = (key: string) => {
+  //   setProductActiveTabKey(key);
+  // };
 
   return (
     <section>
       <Tabs
-        activeKey={productActiveTabKey}
-        onChange={(key) => onChangeHandler(key)}
+        activeKey={manageTabKey}
+        // activeKey={productActiveTabKey}
+        // onChange={(key) => onChangeHandler(key)}
         items={items}
       />
     </section>

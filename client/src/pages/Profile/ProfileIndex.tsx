@@ -12,6 +12,7 @@ const ProfileIndex: React.FC = () => {
   const [products, setProducts] = useState<ProductDocType[]>([]);
   const [editMode, setEditMode] = useState<boolean>(false);
   const [editProductId, setEditProductId] = useState<string | null>(null);
+  const [manageTabKey, setManageTabKey] = useState<string>("1");
 
   const getAllProduct = async () => {
     try {
@@ -31,6 +32,11 @@ const ProfileIndex: React.FC = () => {
   };
 
   useEffect(() => {
+    if (activeTabKey === "1") {
+      setEditMode(false);
+      setEditProductId(null);
+      setManageTabKey("1");
+    }
     getAllProduct();
   }, []);
 
@@ -45,6 +51,7 @@ const ProfileIndex: React.FC = () => {
           setEditMode={setEditMode}
           setEditProductId={setEditProductId}
           getAllProduct={getAllProduct}
+          setManageTabKey={setManageTabKey}
         />
       ),
     },
@@ -57,6 +64,7 @@ const ProfileIndex: React.FC = () => {
           getAllProduct={getAllProduct}
           editMode={editMode}
           editProductId={editProductId}
+          manageTabKey={manageTabKey}
         />
       ),
     },

@@ -11,15 +11,22 @@ import {
 } from "antd";
 import TextArea from "antd/es/input/TextArea";
 import { useEffect, useState } from "react";
-import { createProduct, getOldProduct, updateProduct } from "../../api/products/productAxios";
-import type { ManageProductProps, ProductType } from "../../types/products/productTypes";
+import {
+  createProduct,
+  getOldProduct,
+  updateProduct,
+} from "../../api/products/productAxios";
+import type {
+  ProductFormProps,
+  ProductType,
+} from "../../types/products/productTypes";
 
 const ProductForm = ({
   setActiveTabKey,
   getAllProduct,
   editMode,
   editProductId,
-}: ManageProductProps) => {
+}: ProductFormProps) => {
   const [form] = Form.useForm();
   const [sellerId, setSellerId] = useState<string | null>(null);
 
@@ -249,7 +256,8 @@ const ProductForm = ({
           type="submit"
           className="font-medium text-md md:text-lg bg-indigo-600 text-white w-full cursor-pointer rounded-md px-2 py-1 flex items-center justify-center gap-1 active:scale-95 duration-200"
         >
-          <SquaresPlusIcon width={24} /> {editMode ? "Update Product" : "Sell Product"}
+          <SquaresPlusIcon width={24} />{" "}
+          {editMode ? "Update Product" : "Sell Product"}
         </button>
       </Form>
     </section>

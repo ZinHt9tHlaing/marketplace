@@ -242,6 +242,7 @@ exports.getProductSavedImages = async (req, res) => {
   }
 };
 
+// delete product images
 exports.deleteProductImages = async (req, res) => {
   const { productId, imgToDelete: encodeImgToDelete } = req.params;
 
@@ -260,7 +261,7 @@ exports.deleteProductImages = async (req, res) => {
 
     return res.status(200).json({
       isSuccess: true,
-      message: "Product image deleted successfully.", 
+      message: "Product image deleted successfully.",
     });
   } catch (error) {
     console.log("Product deletion error", error);

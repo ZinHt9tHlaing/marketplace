@@ -41,11 +41,15 @@ export interface GetAllProductsResponse {
   message?: string; // in case error object includes it
 }
 
-export interface ManageProductProps {
+export interface ProductFormProps {
   setActiveTabKey: (key: string) => void;
   getAllProduct: () => Promise<void>;
   editMode: boolean;
   editProductId: string | null;
+}
+
+export interface ManageProductProps extends ProductFormProps {
+  manageTabKey: string;
 }
 
 export interface ProductsPropType {
@@ -54,6 +58,7 @@ export interface ProductsPropType {
   setEditMode: (key: boolean) => void;
   setEditProductId: (id: string) => void;
   getAllProduct: () => Promise<void>;
+  setManageTabKey: (key: string) => void;
 }
 
 export interface deleteSavedImagePayload {
