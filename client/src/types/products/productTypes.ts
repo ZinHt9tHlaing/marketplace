@@ -55,3 +55,8 @@ export interface ProductsPropType {
   setEditProductId: (id: string) => void;
   getAllProduct: () => Promise<void>;
 }
+
+export interface deleteSavedImagePayload {
+  productId: string | null;
+  imgToDelete: string;
+}

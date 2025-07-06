@@ -1,4 +1,5 @@
 import type {
+  deleteSavedImagePayload,
   GetAllProductsResponse,
   ProductType,
 } from "../../types/products/productTypes";
@@ -88,11 +89,52 @@ export const deleteProduct = async (id: string) => {
 };
 
 // upload product image
-export const uploadProductImage = async (payload) => {
+export const uploadProductImage = async (payload: FormData) => {
   try {
     const response = await axiosInstance.post(
       "/upload-product-image",
       payload,
+      {
+        validateStatus: () => true,
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    } else {
+      return error;
+    }
+  }
+};
+
+// get product saved images
+export const getProductSavedImages = async (productId: string) => {
+  try {
+    const response = await axiosInstance.get(
+      `/get-product-saved-images/${productId}`,
+      {
+        validateStatus: () => true,
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return error.message;
+    } else {
+      return error;
+    }
+  }
+};
+
+// delete product image
+export const deleteSavedImages = async (payload: deleteSavedImagePayload) => {
+  try {
+    const { productId, imgToDelete } = payload;
+    const encodeImgToDelete = encodeURIComponent(imgToDelete);
+
+    const response = await axiosInstance.delete(
+      `/delete-product-images/${productId}/${encodeImgToDelete}`,
       {
         validateStatus: () => true,
       }

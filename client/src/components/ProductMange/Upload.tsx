@@ -1,6 +1,10 @@
 import { TrashIcon } from "@heroicons/react/24/solid";
-import { useState } from "react";
-import { uploadProductImage } from "../../api/products/productAxios";
+import { useEffect, useState } from "react";
+import {
+  deleteSavedImages,
+  getProductSavedImages,
+  uploadProductImage,
+} from "../../api/products/productAxios";
 import { message } from "antd";
 
 type UploadProps = {
@@ -11,6 +15,29 @@ type UploadProps = {
 const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
+  const [savedImages, setSavedImages] = useState<string[]>([]);
+
+  const getSavedImages = async (product_id: string) => {
+    try {
+      const response = await getProductSavedImages(product_id);
+
+      if (response.isSuccess) {
+        setSavedImages(response.data.images);
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getSavedImages(editProductId!);
+  }, []);
 
   const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedImages = event.target.files;
@@ -51,10 +78,32 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
     formData.append("product_id", editProductId!);
 
     try {
+      console.log("formData", formData);
       const response = await uploadProductImage(formData);
       if (response.isSuccess) {
         message.success(response.message);
         setActiveTabKey("1");
+      } else {
+        throw new Error(response.message);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        message.error(error.message);
+      } else {
+        console.error("Unknown error:", error);
+      }
+    }
+  };
+
+  const savedImageDeleteHandler = async (img: string) => {
+    setSavedImages((prev) => prev.filter((e) => e !== img));
+    try {
+      const response = await deleteSavedImages({
+        productId: editProductId,
+        imgToDelete: img,
+      });
+      if (response.isSuccess) {
+        message.success(response.message);
       } else {
         throw new Error(response.message);
       }
@@ -72,6 +121,32 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
       <h1 className=" text-2xl font-bold mb-4 text-indigo-600">
         Upload your product's images here.
       </h1>
+      <div className="mt-2">
+        <h1 className="text-lg font-medium mb-2">Saved images in cloud.</h1>
+        {savedImages.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-6">
+            {savedImages.map((img) => (
+              <div key={img} className="h-32 relative group">
+                <img
+                  src={img}
+                  alt={img}
+                  className="w-full h-full object-cover rounded-md"
+                />
+                <TrashIcon
+                  width={20}
+                  height={20}
+                  className="absolute bottom-2 right-3 fill-white cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity active:scale-90 duration-200"
+                  onClick={() => savedImageDeleteHandler(img)}
+                />
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-red-600 font-semibold text-sm mb-5">
+            No images are not saved.
+          </p>
+        )}
+      </div>
       <form
         method="post"
         encType="multipart/form-data"
@@ -79,9 +154,9 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
       >
         <label
           htmlFor="upload-img"
-          className="p-2 rounded-md border-2 border-dashed border-indigo-600 font-medium my-3 cursor-pointer active:scale-90 duration-200"
+          className="p-2 rounded-md border-2 border-dashed border-indigo-600 text-indigo-600 font-medium my-3 cursor-pointer active:scale-90 duration-200"
         >
-          Upload from device
+          Upload image here
         </label>
         <input
           type="file"

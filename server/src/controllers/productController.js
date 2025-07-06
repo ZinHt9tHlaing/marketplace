@@ -5,8 +5,8 @@ require("dotenv").config();
 
 // Configuration
 cloudinary.config({
-  cloud_name: "dyhybhxyw",
-  api_key: "112533765256748",
+  cloud_name: "dl899fpxt",
+  api_key: "289311921327636",
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
@@ -220,5 +220,50 @@ exports.uploadProductImage = async (req, res) => {
   } catch (error) {
     console.log("Product deletion error", error);
     return res.status(400).json({ isSuccess: false, message: error.message });
+  }
+};
+
+// get product saved images
+exports.getProductSavedImages = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const productDoc = await Product.findById(id).select("images");
+    if (!productDoc) {
+      throw new Error("Product not found");
+    }
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product images fetched successfully.",
+      data: productDoc,
+    });
+  } catch (error) {
+    console.log("Product deletion error", error);
+    return res.status(404).json({ isSuccess: false, message: error.message });
+  }
+};
+
+exports.deleteProductImages = async (req, res) => {
+  const { productId, imgToDelete: encodeImgToDelete } = req.params;
+
+  try {
+    await Product.findByIdAndUpdate(
+      productId,
+      { $pull: { images: encodeImgToDelete } },
+      { new: true }
+    );
+
+    const publicId = encodeImgToDelete.substring(
+      encodeImgToDelete.lastIndexOf("/") + 1,
+      encodeImgToDelete.lastIndexOf(".")
+    );
+    await cloudinary.uploader.destroy(publicId);
+
+    return res.status(200).json({
+      isSuccess: true,
+      message: "Product image deleted successfully.", 
+    });
+  } catch (error) {
+    console.log("Product deletion error", error);
+    return res.status(404).json({ isSuccess: false, message: error.message });
   }
 };

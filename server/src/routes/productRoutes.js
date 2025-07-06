@@ -11,6 +11,8 @@ const {
   updateProduct,
   deleteProduct,
   uploadProductImage,
+  getProductSavedImages,
+  deleteProductImages,
 } = require("../controllers/productController");
 
 // create product
@@ -84,5 +86,19 @@ router.delete("/delete-product/:id", authMiddleware, deleteProduct);
 
 // upload product image
 router.post("/upload-product-image", authMiddleware, uploadProductImage);
+
+// get product saved images
+router.get(
+  "/get-product-saved-images/:id",
+  authMiddleware,
+  getProductSavedImages
+);
+
+// delete product  images
+router.delete(
+  "/delete-product-images/:productId/:imgToDelete",
+  authMiddleware,
+  deleteProductImages
+);
 
 module.exports = router;
