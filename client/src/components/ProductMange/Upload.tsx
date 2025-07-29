@@ -6,6 +6,10 @@ import {
   uploadProductImage,
 } from "../../api/products/productAxios";
 import { message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import ButtonLoader from "../loader/ButtonLoader";
+import { setLoader } from "../../store/slice/loaderSlice";
 
 type UploadProps = {
   editProductId: string | null;
@@ -16,6 +20,12 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
   const [previewImages, setPreviewImages] = useState<string[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [savedImages, setSavedImages] = useState<string[]>([]);
+
+  const [selectedImagesCount, setSelectedImagesCount] = useState<number>(0);
+
+  // loader state
+  const { isLoading } = useSelector((state: RootState) => state.reducer.loader);
+  const dispatch = useDispatch<AppDispatch>();
 
   const getSavedImages = async (product_id: string) => {
     try {
@@ -45,6 +55,9 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
 
     const selectedImagesArray = Array.from(selectedImages);
 
+    // update selected images count
+    setSelectedImagesCount((prev) => prev + selectedImagesArray.length);
+
     setImages((prev) => [...prev, ...selectedImagesArray]);
 
     const previewImagesArray = selectedImagesArray.map((img) => {
@@ -55,6 +68,9 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
 
   const deletePreviewImageHandler = (img: string) => {
     const indexToDelete = previewImages.findIndex((imgUrl) => imgUrl === img);
+
+    // update selected images count
+    setSelectedImagesCount((prev) => prev - 1);
 
     if (indexToDelete !== -1) {
       const updatedPreviewImages = [...images];
@@ -70,29 +86,37 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
   const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const formData = new FormData();
-    for (let i = 0; i < images.length; i++) {
-      formData.append(`product_images`, images[i]);
+    dispatch(setLoader(true));
+
+    if (selectedImagesCount >= 2) {
+      const formData = new FormData();
+      for (let i = 0; i < images.length; i++) {
+        formData.append(`product_images`, images[i]);
+      }
+
+      formData.append("product_id", editProductId!);
+
+      try {
+        console.log("formData", formData);
+        const response = await uploadProductImage(formData);
+        if (response.isSuccess) {
+          message.success(response.message);
+          setActiveTabKey("1");
+        } else {
+          throw new Error(response.message);
+        }
+      } catch (error: unknown) {
+        if (error instanceof Error) {
+          message.error(error.message);
+        } else {
+          console.error("Unknown error:", error);
+        }
+      }
+    } else {
+      message.error("Please select at least 2 images.");
     }
 
-    formData.append("product_id", editProductId!);
-
-    try {
-      console.log("formData", formData);
-      const response = await uploadProductImage(formData);
-      if (response.isSuccess) {
-        message.success(response.message);
-        setActiveTabKey("1");
-      } else {
-        throw new Error(response.message);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        message.error(error.message);
-      } else {
-        console.error("Unknown error:", error);
-      }
-    }
+    dispatch(setLoader(false));
   };
 
   const savedImageDeleteHandler = async (img: string) => {
@@ -187,9 +211,17 @@ const Upload = ({ editProductId, setActiveTabKey }: UploadProps) => {
         </div>
         <button
           type="submit"
-          className="block my-4 text-white bg-indigo-600 rounded-md px-3 py-2 font-medium cursor-pointer active:scale-90 duration-200"
+          disabled={isLoading && selectedImagesCount < 2}
+          className="flex items-center my-4 text-white bg-indigo-600 rounded-md px-3 py-2 font-medium cursor-pointer disabled:cursor-not-allowed disabled:pointer-events-auto disabled:opacity-60 active:scale-90 duration-200"
         >
-          Upload to product
+          {isLoading ? (
+            <>
+              <ButtonLoader />
+              <span className="animate-pulse">Uploading...</span>
+            </>
+          ) : (
+            "Upload images"
+          )}
         </button>
       </form>
     </section>

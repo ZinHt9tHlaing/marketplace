@@ -1,9 +1,11 @@
 import { Form, Input, message } from "antd";
 import { loginUser, registerUser } from "../../api/auth/authAxios";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../../store/slice/userSlice";
+import type { AppDispatch, RootState } from "../../store/store";
+import { setLoader } from "../../store/slice/loaderSlice";
+import ButtonLoader from "../loader/ButtonLoader";
 
 type FormInputProps = {
   username: string;
@@ -17,12 +19,13 @@ type isLoginPageProps = {
 
 const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
   const navigate = useNavigate();
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const dispatch = useDispatch();
+  // loader state
+  const { isLoading } = useSelector((state: RootState) => state.reducer.loader);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleOnFinish = async (values: FormInputProps) => {
-    setIsSubmitting(true);
+    dispatch(setLoader(true));
     if (isLoginPage) {
       try {
         const response = await loginUser(values);
@@ -34,7 +37,7 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         } else {
           throw new Error(response.message);
         }
-      } catch (error: unknown) {
+      } catch (error: any) {
         message.error(error.message);
       }
     } else {
@@ -46,11 +49,11 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
         } else {
           throw new Error(response.message);
         }
-      } catch (error: unknown) {
+      } catch (error: any) {
         message.error(error.message);
       }
     }
-    setIsSubmitting(true);
+    dispatch(setLoader(false));
   };
 
   return (
@@ -107,12 +110,10 @@ const AuthForm = ({ isLoginPage }: isLoginPageProps) => {
           <Form.Item>
             <button
               type="submit"
-              disabled={isSubmitting}
-              className="flex justify-center items-center gap-2 w-full outline-none bg-indigo-600 cursor-pointer text-white py-2 rounded-md disabled:cursor-not-allowed disabled:bg-indigo-400 active:scale-95 duration-200"
+              disabled={isLoading}
+              className="flex justify-center items-center gap-2 w-full outline-none bg-indigo-600 cursor-pointer text-white py-2 rounded-md disabled:cursor-not-allowed disabled:pointer-events-auto disabled:opacity-60 active:scale-95 duration-200"
             >
-              {isSubmitting && (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-              )}
+              {isLoading && <ButtonLoader />}
               {isLoginPage ? "Login" : "Register"}
             </button>
           </Form.Item>

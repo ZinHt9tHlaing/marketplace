@@ -20,6 +20,10 @@ import type {
   ProductFormProps,
   ProductType,
 } from "../../types/products/productTypes";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store/store";
+import { setLoader } from "../../store/slice/loaderSlice";
+import ButtonLoader from "../loader/ButtonLoader";
 
 const ProductForm = ({
   setActiveTabKey,
@@ -29,6 +33,10 @@ const ProductForm = ({
 }: ProductFormProps) => {
   const [form] = Form.useForm();
   const [sellerId, setSellerId] = useState<string | null>(null);
+
+  // loader state
+  const { isLoading } = useSelector((state: RootState) => state.reducer.loader);
+  const dispatch = useDispatch<AppDispatch>();
 
   const selectOptions = [
     {
@@ -120,6 +128,8 @@ const ProductForm = ({
   ];
 
   const onFinishHandler = async (values: ProductType) => {
+    dispatch(setLoader(true));
+
     try {
       let response;
       if (editMode) {
@@ -129,6 +139,7 @@ const ProductForm = ({
       } else {
         response = await createProduct(values);
       }
+
       if (response?.isSuccess) {
         form.resetFields();
         message.success(response.message);
@@ -144,6 +155,8 @@ const ProductForm = ({
         console.error("Unknown error:", error);
       }
     }
+
+    dispatch(setLoader(false));
   };
 
   const getOldProductData = async () => {
@@ -254,10 +267,12 @@ const ProductForm = ({
         </Form.Item>
         <button
           type="submit"
-          className="font-medium text-md md:text-lg bg-indigo-600 text-white w-full cursor-pointer rounded-md px-2 py-1 flex items-center justify-center gap-1 active:scale-95 duration-200"
+          disabled={isLoading}
+          className="font-medium text-md md:text-lg bg-indigo-600 text-white w-full cursor-pointer rounded-md px-2 py-1 flex items-center justify-center gap-1 disabled:cursor-not-allowed disabled:pointer-events-auto disabled:opacity-60 active:scale-95 duration-200"
         >
+          {isLoading && <ButtonLoader />}
           <SquaresPlusIcon width={24} />{" "}
-          {editMode ? "Update Product" : "Sell Product"}
+          {editMode && !isLoading ? "Update Product" : "Sell Product"}
         </button>
       </Form>
     </section>
